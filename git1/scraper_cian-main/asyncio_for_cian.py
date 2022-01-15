@@ -18,23 +18,41 @@ async def get_page_data(session, page):
         "user-agent": f"{ua.random}"
     }
 
-    url = f"https://www.cian.ru/cat.php?deal_type=sale&engine_version=2&offer_type=flat&p={page}&region=1&room1=1&room2=1#"
+    url = f"https://www.cian.ru/cat.php?deal_type=sale&engine_version=2&offer_type=flat&p={page}&region=1&room1=1&room2=1"
 
     async with session.get(url=url, headers=headers) as response:
         response_text = await response.text()
-
         soup = BeautifulSoup(response_text, "lxml")
+
         try:
             for a in soup.find("div", attrs={"data-name": "Offers"}).find_all("a", class_=re.compile("--link--eoxce")):
                 print("{} ,{}".format(a.get("href"), page))
         except Exception as ex:
             print(ex)
+
+
+async def extra_page(session):
+    headers = {
+        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+        "user-agent": f"{ua.random}"
+    }
+    count = 0
+    url = "https://www.cian.ru/cat.php?deal_type=sale&engine_version=2&offer_type=flat&p=54&region=1&room1=1&room2=1#"
+
+    async with session.get(url=url, headers=headers) as response:
+        response_text = await response.text()
+        soup = BeautifulSoup(response_text, "lxml")
+
         try:
-            # Suggestions
             for a in soup.find("div", attrs={"data-name": "Suggestions"}).find_all("a", class_=re.compile("--link--eoxce")):
                 print("new {}".format(a.get("href")))
+                count += 1
         except Exception as ex:
-                pass
+            print(ex)
+            print(f"54 page {time.time() - start_time} second")
+            print(20 * "-")
+
+
 
 async def gather_data():
     headers = {
@@ -49,13 +67,14 @@ async def gather_data():
         # page_count = int(soup.find("div", attrs={"data-name": "Pagination"}).find_all("li")[-2].text)
 
         page_count = 54
-
         tasks = []
 
         for page in range(1, page_count + 1):
             task = asyncio.create_task(get_page_data(session, page))
             tasks.append(task)
-
+        for i in range(1, 60000):
+            task = asyncio.create_task(extra_page(session))
+            tasks.append(task)
         await asyncio.gather(*tasks)
 
 
