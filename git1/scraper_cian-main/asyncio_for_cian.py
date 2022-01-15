@@ -4,6 +4,7 @@ import time
 import re
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
+# import pickle
 # from random import choice
 
 
@@ -72,9 +73,9 @@ async def gather_data():
         for page in range(1, page_count + 1):
             task = asyncio.create_task(get_page_data(session, page))
             tasks.append(task)
-        for i in range(1, 60000):
-            task = asyncio.create_task(extra_page(session))
-            tasks.append(task)
+        # for i in range(1, 60000):
+        #     task = asyncio.create_task(extra_page(session))
+        #     tasks.append(task)
         await asyncio.gather(*tasks)
 
 
