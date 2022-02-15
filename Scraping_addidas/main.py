@@ -14,11 +14,11 @@ def get_some_shoes_on_sale():
     url = "https://www.adidas.cz/obuv-originals?start=0&v_size_cs_cz=45"
     req = requests.get(url, headers=headers)
     src = req.text
-    # with open("index.html", "w", encoding="UTF-8-sig") as file:
-    #     file.write(src)
+    with open("index.html", "w", encoding="UTF-8-sig") as file:
+        file.write(src)
 
-    with open("index.html", "r+", encoding="UTF-8-sig") as file:
-        src = file.read()
+    # with open("index.html", "r+", encoding="UTF-8-sig") as file:
+    #     src = file.read()
     soup = BeautifulSoup(src, "lxml")
     page_all_number = int(soup.find(class_=re.compile("pagination")).find_all("span", class_="gl-label gl-label--l")[-1].text.split("/")[-1])
 
@@ -51,8 +51,8 @@ def get_some_shoes_on_sale():
             src = req.text
             with open(f"shoes_page/{i}_{shoes}.html", "w", encoding="UTF-8-sig") as file:
                 file.write(src)
-            with open(f"shoes_page/{i}_{shoes}.html", "r+", encoding="UTF-8-sig") as file:
-                src = file.read()
+            # with open(f"shoes_page/{i}_{shoes}.html", "r+", encoding="UTF-8-sig") as file:
+            #     src = file.read()
             soup = BeautifulSoup(src, "lxml")
             try:
                 cost_shoes = soup.find("div", class_=re.compile("gl-price-item")).text
@@ -61,7 +61,8 @@ def get_some_shoes_on_sale():
                 print(shoes)
                 print(url)
             cost_shoes = cost_shoes.replace(" ", " ")
-            data.append(                {
+            data.append(
+                {
                     "product_article": shoes,
                     "product_url": url,
                     "product_price": cost_shoes
